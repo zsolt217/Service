@@ -6,13 +6,13 @@ namespace WindowsService
 
     class PrepareSQL
     {
-        Dictionary<string, string> _nameAndAlias;
+        Dictionary<string, string> _nameAndAlias = new Dictionary<string, string>();
         string[] _SQLLines;
         public PrepareSQL(string sQL)
         {
-
             _SQLLines = sQL.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
             GetNameAndAlias();
+            ;
 
         }
 
@@ -25,7 +25,7 @@ namespace WindowsService
 
                 string key = string.Empty;
                 int i = line.IndexOf("dbo.[") + 5;
-                while (line[i] != ']' && i <= line.Length)
+                while (i < line.Length && line[i] != ']')
                 {
                     key += line[i];
                     i++;
@@ -36,7 +36,12 @@ namespace WindowsService
 
                 string value = string.Empty;
 
-                //if
+                while (i < line.Length && line[i] != ' ')
+                {
+                    value += line[i];
+                    i++;
+                }
+                _nameAndAlias.Add(key, value);
             }
 
         }

@@ -27,11 +27,11 @@ namespace WindowsService
 
             foreach (var query in _queries)
             {
-                //GetTableNamesAndAliases(query.SQL);
+                new PrepareSQL(query.SQL);
 
                 DataTable dt = new DataTable();
                 dt.Load((new SqlCommand(query.SQL, ConnectionFactory.GetSourceConnection)).ExecuteReader());
-                ;
+                
             }
         }
 
