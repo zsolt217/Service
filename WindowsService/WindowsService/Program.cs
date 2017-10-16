@@ -10,6 +10,7 @@ namespace WindowsService
     {
         static void Main(string[] args)
         {
+            Asd asd = new Asd();
         }
     }
 }

@@ -29,7 +29,7 @@ namespace WindowsService
             {
                 if (_sourceConnection == null)
                 {
-                    string sourceConn = " Data Source = ANONIMUS - PC\\SQL2012ST; Initial Catalog = kszstart_demo; Persist Security Info = True; User ID = Admin; Password = admin";
+                    string sourceConn = " Data Source = localhost\\SQL2012ST; Initial Catalog = kszstart_demo; Persist Security Info = True; User ID = Admin; Password = admin";
                     _sourceConnection = new SqlConnection(sourceConn);
                 }
                 if (_sourceConnection.State == ConnectionState.Broken || _sourceConnection.State == ConnectionState.Closed)
