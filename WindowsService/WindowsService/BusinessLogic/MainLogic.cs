@@ -5,9 +5,9 @@ using System.Data.SqlClient;
 
 namespace WindowsService
 {
-    class Asd
+    internal class MainLogic
     {
-        SqlCommand _sqlcommand = new SqlCommand(@"SELECT Id
+        private SqlCommand _sqlcommand = new SqlCommand(@"SELECT Id
                                               , NextUpdating
                                               , ResultTableName
                                               , SQL
@@ -19,23 +19,34 @@ namespace WindowsService
                                           ,  UpdatePeriodTicks
                                           FROM Query",
             ConnectionFactory.GetDestinationConnection);
-        List<Query> _queries;
 
-        public Asd()
+        private List<Query> _queries;
+
+        public MainLogic()
         {
             ReadQueries();
 
             foreach (var query in _queries)
             {
-                new PrepareSQL(query.SQL);
-
                 DataTable dt = new DataTable();
-                dt.Load((new SqlCommand(query.SQL, ConnectionFactory.GetSourceConnection)).ExecuteReader());
-                
+                dt.Load((new SqlCommand(query.SQL, ConnectionFactory.GetSourceConnection)).ExecuteReader()); //query lefuttatása
+
+                if (String.IsNullOrEmpty(query.ResultTableName))
+                {
+                    query.ResultTableName = CreateTable(new PrepareSQL(query.SQL).GetPrepared(), dt.Columns);
+                }
             }
         }
 
+        private string CreateTable(List<SelectedColumnInf> list, DataColumnCollection dtColl)
+        {
+            foreach (var column in dtColl)
+            {
+            }
 
+            string tableName = Guid.NewGuid().ToString().Replace("-", String.Empty);
+            return tableName;
+        }
 
         private void ReadQueries()
         {

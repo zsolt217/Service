@@ -2,9 +2,8 @@
 
 namespace WindowsService
 {
-    class Query
+    internal class Query
     {
-
         public int Id { get; set; }
         public string Name { get; set; }
         public DateTime CreationDate { get; set; }
@@ -15,6 +14,7 @@ namespace WindowsService
         public string TranslatedColumnNames { get; set; }
         public DateTime NextUpdating { get; set; }
         public TimeSpan UpdatePeriod { get; set; }
+
         public long UpdatePeriodTicks
         {
             get
