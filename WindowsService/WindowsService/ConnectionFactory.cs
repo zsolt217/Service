@@ -14,7 +14,7 @@ namespace WindowsService
             {
                 if (_destinationConnection == null)
                 {
-                    string destinationConn = "Data Source = localhost\\SQL2012ST; Initial Catalog = ReportDB; Persist Security Info = True; User ID = admin; Password = admin";
+                    string destinationConn = "Data Source = localhost\\SQL2012ST; Initial Catalog = ReportDB; MultipleActiveResultSets=True; Persist Security Info = True; User ID = admin; Password = admin";
                     _destinationConnection = new SqlConnection(destinationConn);
                 }
                 if (_destinationConnection.State == ConnectionState.Broken || _destinationConnection.State == ConnectionState.Closed)
@@ -29,7 +29,7 @@ namespace WindowsService
             {
                 if (_sourceConnection == null)
                 {
-                    string sourceConn = " Data Source = localhost\\SQL2012ST; Initial Catalog = kszstart_demo; Persist Security Info = True; User ID = Admin; Password = admin";
+                    string sourceConn = " Data Source = localhost\\SQL2012ST; Initial Catalog = kszstart_demo;MultipleActiveResultSets=True; Persist Security Info = True; User ID = Admin; Password = admin";
                     _sourceConnection = new SqlConnection(sourceConn);
                 }
                 if (_sourceConnection.State == ConnectionState.Broken || _sourceConnection.State == ConnectionState.Closed)
