@@ -9,8 +9,7 @@ namespace WindowsService
 {
     internal class MainLogic
     {
-        private SqlCommand _sqlcommand = new SqlCommand(@"SELECT Id
-                                              , NextUpdating
+        private SqlCommand _commandGetQueries = new SqlCommand(@"SELECT Id                                          , NextUpdating
                                               , ResultTableName
                                               , SQL
                                               , TranslatedColumnNames
@@ -26,8 +25,8 @@ namespace WindowsService
 
         public MainLogic()
         {
+            _queries = new List<Query>();
             ReadQueries();
-
             foreach (var query in _queries)
             {
                 DataTable dt = new DataTable();
@@ -146,8 +145,8 @@ namespace WindowsService
             GetDataTypeOfListItems(list);
             foreach (var column in dtColl)
             {
-                var casualSelect = list.Find(x => x.AliasColumnName == column.ToString());//TODO: felkészíteni arra h a casualselect esetleg több találatot ad vissza
-                if (casualSelect != null && !String.IsNullOrEmpty((casualSelect as SelectedColumnInf).DataType))
+                var casualSelect = list.Find(x => x.AliasColumnName == column.ToString());
+                if (casualSelect != null && !String.IsNullOrEmpty((casualSelect as SelectedColumnInf)?.DataType))
                 { BuildColumnsWithType(column.ToString(), (casualSelect as SelectedColumnInf).DataType, (casualSelect as SelectedColumnInf).CharacterMaxLength, (casualSelect as SelectedColumnInf).NumericPrecision, (casualSelect as SelectedColumnInf).NumericScale); }
                 else//ha nem tudjuk a típusát, vagy a lekérdezés miatt nagyon bonyolult akk nvarchar lesz
                 { BuildColumnsWithType(column.ToString(), "nvarchar", -1, 0, 0); }
@@ -177,6 +176,11 @@ namespace WindowsService
                 _columnsWithType += String.Format(",[{0}] [{1}] {2}", columName, columnType, lengthConstraints);
         }
 
+        /// <summary>
+        /// Az ékezeteket távolítja el azért hogy valid oszlopneveket kapjunk
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
         private string RemoveDiacritics(string text)
         {
             var normalizedString = text.Normalize(NormalizationForm.FormD);
@@ -233,18 +237,21 @@ namespace WindowsService
 
         private void ReadQueries()
         {
-            _sqlcommand.ExecuteNonQuery();
-            SqlDataReader dr = _sqlcommand.ExecuteReader();
-            _queries = new List<Query>();
-            while (dr.Read())
+            //_sqlcommand.ExecuteNonQuery();
+            using (SqlDataReader dr = _commandGetQueries.ExecuteReader())
             {
-                Query query = new Query();
-                query.Id = int.Parse(dr["Id"].ToString());
-                query.NextUpdating = DateTime.Parse(dr["NextUpdating"].ToString());
-                query.ResultTableName = dr["ResultTableName"].ToString();
-                query.SQL = dr["SQL"].ToString();
-                query.UpdatePeriodTicks = long.Parse(dr["UpdatePeriodTicks"].ToString());
-                _queries.Add(query);
+                while (dr.Read())
+                {
+                    Query query = new Query
+                    {
+                        Id = int.Parse(dr["Id"].ToString()),
+                        NextUpdating = DateTime.Parse(dr["NextUpdating"].ToString()),
+                        ResultTableName = dr["ResultTableName"].ToString(),
+                        SQL = dr["SQL"].ToString(),
+                        UpdatePeriodTicks = long.Parse(dr["UpdatePeriodTicks"].ToString())
+                    };
+                    _queries.Add(query);
+                }
             }
         }
     }
