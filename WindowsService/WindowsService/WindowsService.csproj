@@ -46,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BusinessLogic\MainLogic.cs" />
+    <Compile Include="BusinessLogic\PreviousLogic.cs" />
     <Compile Include="BusinessLogic\SelectedColumnInf.cs" />
     <Compile Include="ConnectionFactory.cs" />
     <Compile Include="BusinessLogic\PrepareSQL.cs" />

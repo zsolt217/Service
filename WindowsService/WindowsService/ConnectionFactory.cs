@@ -23,6 +23,12 @@ namespace WindowsService
             }
         }
 
+        public static string GetDestinationCatalogName
+        {
+            get => "ReportDB";
+        }
+
+
         public static SqlConnection GetSourceConnection
         {
             get
@@ -36,6 +42,11 @@ namespace WindowsService
                     _sourceConnection.Open();
                 return _sourceConnection;
             }
+        }
+
+        public static string GetSourceCatalogName
+        {
+            get => "kszstart_demo";
         }
 
         public static void Dispose()
