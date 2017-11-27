@@ -6,33 +6,33 @@ namespace WindowsService
     {
         private static void Main(string[] args)
         {
-            HostFactory.Run(serviceConfig =>
-                              {
-                                  //https://stackoverflow.com/questions/19151363/windows-service-to-run-a-function-at-specified-time
-                                  //itt írják hh kell
+            MainLogic asd = new MainLogic();
+            //HostFactory.Run(serviceConfig =>
+            //                  {
+            //                      //https://stackoverflow.com/questions/19151363/windows-service-to-run-a-function-at-specified-time
+            //                      //itt írják hh kell
 
-                                  serviceConfig.UseNLog();
+            //                      serviceConfig.UseNLog();
 
-                                  serviceConfig.Service<MainLogic>(
+            //                      serviceConfig.Service<MainLogic>(
 
 
-                              LogicInstance =>
-                                  {
-                                      LogicInstance.ConstructUsing(() => new MainLogic());
+            //                  LogicInstance =>
+            //                      {
+            //                          LogicInstance.ConstructUsing(() => new MainLogic());
 
-                                      LogicInstance.WhenStarted(
-                                          execute => execute.Start());
+            //                          LogicInstance.WhenStarted(
+            //                              execute => execute.Start());
 
-                                      LogicInstance.WhenStopped(
-                                          execute => execute.Stop());
-                                  });
+            //                          LogicInstance.WhenStopped(
+            //                              execute => execute.Stop());
+            //                      });
 
-                                  serviceConfig.SetServiceName("AwesomeFileConverter");
-                                  serviceConfig.SetDisplayName("Awesome File Converter");
-                                  serviceConfig.SetDescription("A Pluralsight demo service");
-
-                                  serviceConfig.StartAutomatically();
-                              });
+            //                      serviceConfig.SetServiceName("Converter");
+            //                      serviceConfig.SetDisplayName("Reporting data converter");
+            //                      serviceConfig.SetDescription("Runs stored SQLs in Reporting Web Service.");
+            //                      serviceConfig.StartAutomatically();
+            //                  });
         }
     }
 }

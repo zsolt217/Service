@@ -7,6 +7,11 @@ namespace WindowsService
 {
     public class MainLogic
     {
+        public bool Start()
+        { return true; }
+        public bool Stop()
+        { return true; }
+
         private SqlCommand _commandGetQueries = new SqlCommand(@"SELECT Id
                                               , NextUpdating
                                               , ResultTableName
@@ -14,7 +19,7 @@ namespace WindowsService
                                               , TranslatedColumnNames
                                               , Name
                                               , CreationDate
-                                              , GUID
+                                              , QueryGUID
                                               , ModifyDate
                                           ,  UpdatePeriodTicks
                                           FROM Query",
@@ -25,16 +30,14 @@ namespace WindowsService
         {
             _queries = new List<Query>();
             ReadQueries();
-
-            ReadQueries();
             foreach (var query in _queries)
             {
-                if (DateTime.Now >= query.NextUpdating)
-                {
-                    ExecuteQuery(query);
-                    query.NextUpdating = query.NextUpdating + query.UpdatePeriod;
-                    UpdateQuery(query);
-                }
+                //if (DateTime.Now >= query.NextUpdating)
+                //{
+                ExecuteQuery(query);
+                query.NextUpdating = DateTime.Now + query.UpdatePeriod;
+                UpdateQuery(query);
+                //}
             }
         }
 
@@ -55,9 +58,10 @@ namespace WindowsService
             new SqlCommand(String.Format(@"if exists(select 1 from sys.tables where name='{0}' and type='U')
                                                     drop table {0}", tableName), ConnectionFactory.GetDestinationConnection).ExecuteNonQuery();
             new SqlCommand(String.Format("create view {0} as {1}", tableName, query.SQL), ConnectionFactory.GetSourceConnection).ExecuteNonQuery();
+            //TODO: hálózatosra átírni
             new SqlCommand(String.Format(@"select *
                                                     into[{1}].[dbo].[{0}]
-                                                    from {0}", tableName, ConnectionFactory.GetDestinationCatalogName), ConnectionFactory.GetSourceConnection).ExecuteNonQuery();
+                                                    from {0}", tableName, new SqlConnectionStringBuilder(ConnectionFactory.GetDestinationConnection.ConnectionString).InitialCatalog), ConnectionFactory.GetSourceConnection).ExecuteNonQuery();
         }
 
         private void UpdateQuery(Query query)
@@ -80,7 +84,6 @@ namespace WindowsService
 
         private void ReadQueries()
         {
-            //_sqlcommand.ExecuteNonQuery();
             using (SqlDataReader dr = _commandGetQueries.ExecuteReader())
             {
                 while (dr.Read())

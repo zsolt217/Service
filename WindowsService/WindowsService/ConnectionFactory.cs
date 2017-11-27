@@ -1,9 +1,10 @@
-﻿using System.Data;
+﻿using System.Configuration;
+using System.Data;
 using System.Data.SqlClient;
 
 namespace WindowsService
 {
-    internal static class ConnectionFactory
+    public static class ConnectionFactory
     {
         private static SqlConnection _destinationConnection;
         private static SqlConnection _sourceConnection;
@@ -14,7 +15,7 @@ namespace WindowsService
             {
                 if (_destinationConnection == null)
                 {
-                    string destinationConn = "Data Source = localhost\\SQL2012ST; Initial Catalog = ReportDB; MultipleActiveResultSets=True; Persist Security Info = True; User ID = admin; Password = admin";
+                    string destinationConn = ConfigurationManager.ConnectionStrings["DestionationDB"].ConnectionString;
                     _destinationConnection = new SqlConnection(destinationConn);
                 }
                 if (_destinationConnection.State == ConnectionState.Broken || _destinationConnection.State == ConnectionState.Closed)
@@ -23,36 +24,19 @@ namespace WindowsService
             }
         }
 
-        public static string GetDestinationCatalogName
-        {
-            get => "ReportDB";
-        }
-
-
         public static SqlConnection GetSourceConnection
         {
             get
             {
                 if (_sourceConnection == null)
                 {
-                    string sourceConn = " Data Source = localhost\\SQL2012ST; Initial Catalog = kszstart_demo;MultipleActiveResultSets=True; Persist Security Info = True; User ID = Admin; Password = admin";
+                    string sourceConn = ConfigurationManager.ConnectionStrings["SourceDB"].ConnectionString;
                     _sourceConnection = new SqlConnection(sourceConn);
                 }
                 if (_sourceConnection.State == ConnectionState.Broken || _sourceConnection.State == ConnectionState.Closed)
                     _sourceConnection.Open();
                 return _sourceConnection;
             }
-        }
-
-        public static string GetSourceCatalogName
-        {
-            get => "kszstart_demo";
-        }
-
-        public static void Dispose()
-        {
-            _sourceConnection.Close();
-            _destinationConnection.Close();
         }
     }
 }
