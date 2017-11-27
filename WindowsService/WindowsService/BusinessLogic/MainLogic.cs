@@ -24,18 +24,19 @@ namespace WindowsService.BusinessLogic
         private List<Query> _queries;
         private static readonly LogWriter _log = HostLogger.Get<MainLogic>();
 
-        public MainLogic()
+        public MainLogic(ref bool stopping)
         {
             _queries = new List<Query>();
             ReadQueries();
             foreach (var query in _queries)
             {
-                //if (DateTime.Now >= query.NextUpdating)
-                //{
-                ExecuteQuery(query);
-                query.NextUpdating = DateTime.Now + query.UpdatePeriod;
-                UpdateQuery(query);
-                //}
+                if (!stopping && DateTime.Now >= query.NextUpdating)
+                {
+                    _log.InfoFormat($"{DateTime.Now} Updating {query.Name} source.");
+                    ExecuteQuery(query);
+                    query.NextUpdating = DateTime.Now + query.UpdatePeriod;
+                    UpdateQuery(query);
+                }
             }
         }
 
@@ -47,24 +48,29 @@ namespace WindowsService.BusinessLogic
             {
                 tableName = "a" + Guid.NewGuid().ToString().Replace("-", String.Empty); //azért fűzök hozzá egy karaktert, mert a GUID kezdődhet számmal is, az pedig nem valid táblanév      
                 query.ResultTableName = tableName;
+                _log.InfoFormat($"{DateTime.Now} Table name generated, update query.");
                 UpdateQuery(query);
+                _log.InfoFormat($"{DateTime.Now} Query updated.");
             }
             else
             { tableName = query.ResultTableName; }
-
+            _log.InfoFormat($"{DateTime.Now} Deleting view if exists.");
             new SqlCommand(String.Format(@"if exists(select 1 from sys.views where name='{0}' and type='v')
                                                     drop view {0}", tableName), ConnectionFactory.GetSourceConnection).ExecuteNonQuery();
+            _log.InfoFormat($"{DateTime.Now} Drop destination table if exists.");
             new SqlCommand(String.Format(@"if exists(select 1 from sys.tables where name='{0}' and type='U')
                                                     drop table {0}", tableName), ConnectionFactory.GetDestinationConnection).ExecuteNonQuery();
+            _log.InfoFormat($"{DateTime.Now} Copy data into view.");
             new SqlCommand(String.Format("create view {0} as {1}", tableName, query.SQL), ConnectionFactory.GetSourceConnection).ExecuteNonQuery();
-            //TODO: hálózatosra átírni
-            new SqlCommand(String.Format(@"select *
-                                                    into[{1}].[dbo].[{0}]
+            new SqlCommand(String.Format(@"select * into[{1}].[dbo].[{0}]
                                                     from {0}", tableName, new SqlConnectionStringBuilder(ConnectionFactory.GetDestinationConnection.ConnectionString).InitialCatalog), ConnectionFactory.GetSourceConnection).ExecuteNonQuery();
+            _log.InfoFormat($"{DateTime.Now} Copty data from view to destanation table.");
+            //TODO: hálózatosság vizsgálata, plussz primary key írás ha nincs.
         }
 
         private void ReadQueries()
         {
+            _log.InfoFormat($"{DateTime.Now} Reading Queries.");
             using (SqlDataReader dr = _commandGetQueries.ExecuteReader())
             {
                 while (dr.Read())
@@ -82,6 +88,7 @@ namespace WindowsService.BusinessLogic
                     _queries.Add(query);
                 }
             }
+            _log.InfoFormat($"{DateTime.Now} Reading queries is finished.");
         }
 
         private void UpdateQuery(Query query)

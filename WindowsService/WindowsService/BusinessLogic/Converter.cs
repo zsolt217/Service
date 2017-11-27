@@ -2,7 +2,10 @@
 using System.Configuration;
 using System.Data.SqlClient;
 using System.IO;
+using System.Timers;
+
 using Topshelf.Logging;
+using WindowsService.BusinessLogic;
 
 namespace WindowsService
 {
@@ -10,26 +13,43 @@ namespace WindowsService
     {
         private bool _testSeed;
         private static readonly LogWriter _log = HostLogger.Get<Converter>();
+        Timer _timer;
+        private bool _stopping;
+
         public Converter()
         {
-            //_testSeed = testSeed;
-            //Start();
-            //Stop();
+            _testSeed = bool.Parse(ConfigurationManager.AppSettings["Seed"]);
+            _timer = new Timer();
         }
         public bool Start()
         {
+            _stopping = false;
             _log.InfoFormat($"{DateTime.Now} Service started. ");
-            //if (_testSeed)
+            if (_testSeed)
                 Seed();
+
+            _timer.Enabled = true;
+            _timer.Interval = 30 * 60 * 1000;
+            _timer.Elapsed += new System.Timers.ElapsedEventHandler(Timer_Elapsed);
             return true;
         }
 
-
+        private void Timer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            _log.InfoFormat($"{DateTime.Now} Timer elapsed.");
+            new MainLogic(ref _stopping);
+        }
 
         public bool Stop()
         {
+            _log.InfoFormat($"{DateTime.Now} Shutting down.");
+            _stopping = true;
+            _timer.Enabled = false;
+            _timer = null;
+            _log.InfoFormat($"{DateTime.Now} Closing connections.");
             ConnectionFactory.GetSourceConnection.Close();
             ConnectionFactory.GetDestinationConnection.Close();
+            _log.InfoFormat($"{DateTime.Now} Connection closed.");
             return true;
         }
 
@@ -38,6 +58,7 @@ namespace WindowsService
             try
             {
                 ConnectionFactory.GetSourceConnection.Open();
+                _log.InfoFormat($"{DateTime.Now} Already created demo db.");
             }
             catch (Exception ex)//Database not exists
             {
