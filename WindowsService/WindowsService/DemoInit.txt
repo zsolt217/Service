@@ -1,44 +1,4 @@
-﻿USE [Source]
-GO
-IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK__StockBala__Produ__24927208]') AND parent_object_id = OBJECT_ID(N'[dbo].[StockBalance]'))
-ALTER TABLE [dbo].[StockBalance] DROP CONSTRAINT [FK__StockBala__Produ__24927208]
-GO
-IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK__InvoiceDe__Produ__239E4DCF]') AND parent_object_id = OBJECT_ID(N'[dbo].[InvoiceDetail]'))
-ALTER TABLE [dbo].[InvoiceDetail] DROP CONSTRAINT [FK__InvoiceDe__Produ__239E4DCF]
-GO
-IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK__InvoiceDe__Invoi__21B6055D]') AND parent_object_id = OBJECT_ID(N'[dbo].[InvoiceDetail]'))
-ALTER TABLE [dbo].[InvoiceDetail] DROP CONSTRAINT [FK__InvoiceDe__Invoi__21B6055D]
-GO
-IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK__Invoice__Custome__20C1E124]') AND parent_object_id = OBJECT_ID(N'[dbo].[Invoice]'))
-ALTER TABLE [dbo].[Invoice] DROP CONSTRAINT [FK__Invoice__Custome__20C1E124]
-GO
-/****** Object:  Table [dbo].[StockBalance]    Script Date: 2017.11.27. 14:09:47 ******/
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[StockBalance]') AND type in (N'U'))
-DROP TABLE [dbo].[StockBalance]
-GO
-/****** Object:  Table [dbo].[Product]    Script Date: 2017.11.27. 14:09:47 ******/
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Product]') AND type in (N'U'))
-DROP TABLE [dbo].[Product]
-GO
-/****** Object:  Table [dbo].[InvoiceDetail]    Script Date: 2017.11.27. 14:09:47 ******/
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[InvoiceDetail]') AND type in (N'U'))
-DROP TABLE [dbo].[InvoiceDetail]
-GO
-/****** Object:  Table [dbo].[Invoice]    Script Date: 2017.11.27. 14:09:47 ******/
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Invoice]') AND type in (N'U'))
-DROP TABLE [dbo].[Invoice]
-GO
-/****** Object:  Table [dbo].[Customer]    Script Date: 2017.11.27. 14:09:47 ******/
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Customer]') AND type in (N'U'))
-DROP TABLE [dbo].[Customer]
-GO
-USE [master]
-GO
-/****** Object:  Database [Source]    Script Date: 2017.11.27. 14:09:47 ******/
-IF  EXISTS (SELECT name FROM sys.databases WHERE name = N'Source')
-DROP DATABASE [Source]
-GO
-/****** Object:  Database [Source]    Script Date: 2017.11.27. 14:09:47 ******/
+﻿/****** Object:  Database [Source]    Script Date: 2017.11.27. 14:09:47 ******/
 IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = N'Source')
 BEGIN
 CREATE DATABASE [Source]

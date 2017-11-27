@@ -2,16 +2,12 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using Topshelf.Logging;
 
-namespace WindowsService
+namespace WindowsService.BusinessLogic
 {
-    public class MainLogic
+    class MainLogic
     {
-        public bool Start()
-        { return true; }
-        public bool Stop()
-        { return true; }
-
         private SqlCommand _commandGetQueries = new SqlCommand(@"SELECT Id
                                               , NextUpdating
                                               , ResultTableName
@@ -26,6 +22,8 @@ namespace WindowsService
            ConnectionFactory.GetDestinationConnection);
 
         private List<Query> _queries;
+        private static readonly LogWriter _log = HostLogger.Get<MainLogic>();
+
         public MainLogic()
         {
             _queries = new List<Query>();
@@ -40,6 +38,7 @@ namespace WindowsService
                 //}
             }
         }
+
 
         private void ExecuteQuery(Query query)
         {
@@ -64,24 +63,6 @@ namespace WindowsService
                                                     from {0}", tableName, new SqlConnectionStringBuilder(ConnectionFactory.GetDestinationConnection.ConnectionString).InitialCatalog), ConnectionFactory.GetSourceConnection).ExecuteNonQuery();
         }
 
-        private void UpdateQuery(Query query)
-        {
-            SqlCommand updateQuery = new SqlCommand(String.Format(@"update Query set [NextUpdating] = @NextUpdating
-                                          ,[ResultTableName] = @ResultTableName
-                                          ,[SQL] = @SQL
-                                          ,[TranslatedColumnNames] = @TranslatedColumnNames
-                                          ,[UpdatePeriodTicks] = @UpdatePeriodTicks
-                                          ,[Name] = @Name
-                                          where Id = {0}", query.Id), ConnectionFactory.GetDestinationConnection);
-            updateQuery.Parameters.Add("@NextUpdating", SqlDbType.DateTime2).Value = query.NextUpdating;
-            updateQuery.Parameters.Add("@ResultTableName", SqlDbType.NVarChar).Value = query.ResultTableName;
-            updateQuery.Parameters.Add("@SQL", SqlDbType.NVarChar).Value = query.SQL;
-            updateQuery.Parameters.Add("@TranslatedColumnNames", SqlDbType.NVarChar).Value = query.TranslatedColumnNames;
-            updateQuery.Parameters.Add("@UpdatePeriodTicks", SqlDbType.BigInt).Value = query.UpdatePeriodTicks;
-            updateQuery.Parameters.Add("@Name", SqlDbType.NVarChar).Value = query.Name;
-            updateQuery.ExecuteNonQuery();
-        }
-
         private void ReadQueries()
         {
             using (SqlDataReader dr = _commandGetQueries.ExecuteReader())
@@ -101,6 +82,24 @@ namespace WindowsService
                     _queries.Add(query);
                 }
             }
+        }
+
+        private void UpdateQuery(Query query)
+        {
+            SqlCommand updateQuery = new SqlCommand(String.Format(@"update Query set [NextUpdating] = @NextUpdating
+                                          ,[ResultTableName] = @ResultTableName
+                                          ,[SQL] = @SQL
+                                          ,[TranslatedColumnNames] = @TranslatedColumnNames
+                                          ,[UpdatePeriodTicks] = @UpdatePeriodTicks
+                                          ,[Name] = @Name
+                                          where Id = {0}", query.Id), ConnectionFactory.GetDestinationConnection);
+            updateQuery.Parameters.Add("@NextUpdating", SqlDbType.DateTime2).Value = query.NextUpdating;
+            updateQuery.Parameters.Add("@ResultTableName", SqlDbType.NVarChar).Value = query.ResultTableName;
+            updateQuery.Parameters.Add("@SQL", SqlDbType.NVarChar).Value = query.SQL;
+            updateQuery.Parameters.Add("@TranslatedColumnNames", SqlDbType.NVarChar).Value = query.TranslatedColumnNames;
+            updateQuery.Parameters.Add("@UpdatePeriodTicks", SqlDbType.BigInt).Value = query.UpdatePeriodTicks;
+            updateQuery.Parameters.Add("@Name", SqlDbType.NVarChar).Value = query.Name;
+            updateQuery.ExecuteNonQuery();
         }
     }
 }

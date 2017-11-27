@@ -6,8 +6,6 @@ namespace WindowsService
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public DateTime CreationDate { get; set; }
-        public DateTime ModifyDate { get; set; }
         public string GUID { get; set; }
         public string SQL { get; set; }
         public string ResultTableName { get; set; }
