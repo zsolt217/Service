@@ -57,7 +57,8 @@ namespace WindowsService
         {
             try
             {
-                ConnectionFactory.GetSourceConnection.Open();
+                if (ConnectionFactory.GetSourceConnection.State != System.Data.ConnectionState.Open)
+                    ConnectionFactory.GetSourceConnection.Open();
                 _log.InfoFormat($"{DateTime.Now} Already created demo db.");
             }
             catch (Exception ex)//Database not exists
