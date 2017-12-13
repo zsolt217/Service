@@ -27,6 +27,7 @@ namespace WindowsService
             _log.InfoFormat($"{DateTime.Now} Service started. ");
             if (_testSeed)
                 Seed();
+            Timer_Elapsed(this, null);
 
             _timer.Enabled = true;
             _timer.Interval = 30 * 60 * 1000;

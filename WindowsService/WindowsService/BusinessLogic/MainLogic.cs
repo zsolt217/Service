@@ -65,7 +65,6 @@ namespace WindowsService.BusinessLogic
             new SqlCommand(String.Format(@"select * into[{1}].[dbo].[{0}]
                                                     from {0}", tableName, new SqlConnectionStringBuilder(ConnectionFactory.GetDestinationConnection.ConnectionString).InitialCatalog), ConnectionFactory.GetSourceConnection).ExecuteNonQuery();
             _log.InfoFormat($"{DateTime.Now} Copty data from view to destanation table.");
-            //TODO: hálózatosság vizsgálata, plussz primary key írás ha nincs.
         }
 
         private void ReadQueries()

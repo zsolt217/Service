@@ -69,10 +69,7 @@
   <ItemGroup>
     <Compile Include="BusinessLogic\Converter.cs" />
     <Compile Include="BusinessLogic\MainLogic.cs" />
-    <Compile Include="PreviousLogic\PreviousLogic.cs" />
-    <Compile Include="PreviousLogic\SelectedColumnInf.cs" />
     <Compile Include="ConnectionFactory.cs" />
-    <Compile Include="PreviousLogic\PrepareSQL.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="BusinessLogic\Query.cs" />

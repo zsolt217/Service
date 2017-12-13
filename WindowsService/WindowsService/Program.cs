@@ -8,9 +8,6 @@ namespace WindowsService
         {
             HostFactory.Run(serviceConfig =>
                               {
-                                  //https://stackoverflow.com/questions/19151363/windows-service-to-run-a-function-at-specified-time
-                                  //itt írják hh kell
-
                                   serviceConfig.UseNLog();
                                   serviceConfig.Service<Converter>(
                               LogicInstance =>
